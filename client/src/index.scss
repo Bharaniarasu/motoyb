@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bikes {
+  .bike {
+    filter: drop-shadow(4px 8px 8px grey);
+    .bike-img {
+      transition: all 0.3s ease-in-out;
+      //   min-height: 18rem;
+    }
+    &:hover > .bike-img {
+      scale: 1.15;
+    }
+  }
+}
