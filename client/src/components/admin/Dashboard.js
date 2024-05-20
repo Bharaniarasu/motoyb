@@ -131,13 +131,13 @@ const Dashboard = () => {
           {tasks && <Chart tasksData={tasks} />}
         </div>
         <div className="rounded-xl shadow-2xl bg-white">
-          <div className="grid grid-cols-1 sm:grid-cols-2  p-6 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-1  p-6 gap-3">
             <div>
               <label
                 htmlFor="first_name"
                 className="block mb-2 text-sm font-medium text-gray-900 "
               >
-                From Date
+                Select Date
               </label>
               <input
                 type="date"
@@ -150,15 +150,6 @@ const Dashboard = () => {
                 }}
                 required
               />
-            </div>
-
-            <div className="mt-7">
-              <button
-                className="border font-bold bg-blue-600  border-blue-700 text-white hover:border-blue-700 hover:text-blue-600 hover:bg-white   text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                onClick={submitHandler}
-              >
-                Filter
-              </button>
             </div>
           </div>
           {performanceReport && (

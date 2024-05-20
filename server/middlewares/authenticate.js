@@ -14,7 +14,6 @@ exports.isAuthenticatedUser = catchAsyncError(async (req, res, next) => {
 });
 
 //authenticate users for particular operations
-//callback function will return
 exports.autheriseUserRole =
   (...roles) =>
   (req, res, next) => {

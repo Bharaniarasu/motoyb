@@ -1,58 +1,61 @@
-import { Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
+import { useUser } from "../services/UserContext";
 
-const fetchData = async () => {
-  try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_SERVER_URL}/api/v1/user`,
-      { withCredentials: true }
-    );
-    if (response) {
-      return response.data;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-  }
-};
-const ProtectedRoute = ({ children, roles = [], roleHandler }) => {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState();
+export const ValidateAdmin = ({ children }) => {
+  const { userData, loading } = useUser();
+  const navigate = useNavigate();
 
-  roleHandler(role);
-
-  useEffect(() => {
-    const checkAuthentication = async () => {
-      try {
-        const { user } = await fetchData();
-        // setAuthenticated(result);
-        console.log(user);
-        if (user) {
-          // Assuming userData contains a role property
-          const { role } = user;
-          setRole(role);
-          const hasRequiredRole = roles.includes(role);
-          setAuthenticated(hasRequiredRole);
-        } else {
-          setAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setAuthenticated(false); // Set authenticated to false in case of error
-      } finally {
-        setLoading(false); // Set loading to false
-      }
-    };
-    checkAuthentication();
-  }, [roles]);
   if (loading) {
-    // Render a loading indicator
     return <Loader />;
   }
-  return authenticated ? children : <Navigate to="/login" replace />;
+
+  return userData.role === "admin" ? (
+    children
+  ) : (
+    <div className="flex flex-col justify-center items-center h-screen">
+      <div className="font-bold text-2xl text-red-600">Access Denied</div>
+
+      <button
+        className="mt-2 p-1 px-2 border-2 border-blue-600 text-blue-600 rounded-md"
+        onClick={() => navigate("/")}
+      >
+        Home
+      </button>
+    </div>
+  );
 };
+
+export const ValidateUser = ({ children }) => {
+  const { userData, loading } = useUser();
+  const navigate = useNavigate();
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  return userData.role === "user" ? (
+    children
+  ) : (
+    <div className="flex flex-col justify-center items-center h-screen ">
+      <div className="font-bold text-2xl text-red-600">Access Denied</div>
+      <button
+        className="mt-2 p-1 px-2 border-2 border-blue-600 text-blue-600 rounded-md"
+        onClick={() => navigate("/")}
+      >
+        Home
+      </button>
+    </div>
+  );
+};
+const ProtectedRoute = ({ children }) => {
+  const { userData, loading } = useUser();
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  return userData ? children : <Navigate to="/login" replace />;
+};
+
 export default ProtectedRoute;

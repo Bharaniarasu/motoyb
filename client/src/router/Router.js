@@ -1,75 +1,83 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Login from "../components/Login";
-import ProtectedRoute from "./ProtectedRouter";
+import ProtectedRoute, {
+  ValidateAdmin,
+  ValidateUser,
+  fetchUserData,
+} from "./ProtectedRouter";
 import HomeAdmin from "../components/admin/Home";
 import HomeUser from "../components/employee/Home";
 import Process from "../components/employee/Process";
 import UserLayout from "../layout/UserLayout";
-import { useState } from "react";
+import { useUser } from "../services/UserContext";
 
-const HomeComponent = ({ role }) => {
-  if (role === "admin") {
-    return <HomeAdmin />;
-  }
-  if (role === "user") {
-    return <HomeUser />;
+const HomeComponent = () => {
+  const { userData, loading } = useUser();
+
+  //Need to check role
+  switch (userData.role) {
+    case "admin":
+      return <HomeAdmin />;
+    case "user":
+      return <HomeUser />;
+    default:
+      return null;
   }
 };
-const Router = () => {
-  const [role, setRole] = useState();
 
+const AppRouter = () => {
+  const navigate = useNavigate();
   return (
     <Routes>
       <Route
-        exact
         path="/"
         element={
-          <ProtectedRoute
-            roles={["admin", "user"]}
-            roleHandler={(val) => setRole(val)}
-          >
-            <HomeComponent role={role} />
+          <ProtectedRoute>
+            <HomeComponent />
           </ProtectedRoute>
         }
       />
       <Route
-        exact
         path="/dashboard"
         element={
-          <ProtectedRoute
-            roles={["admin", "user"]}
-            roleHandler={(val) => setRole(val)}
-          >
-            <HomeComponent role={role} />
+          <ProtectedRoute>
+            <ValidateAdmin>
+              <HomeAdmin />
+            </ValidateAdmin>
           </ProtectedRoute>
         }
       />
-      <Route exact path="/login" element={<Login />} />
-      {/* <Route
-        exact
-        path="/bikes"
-        element={
-          <ProtectedRoute roles={["user", "admin"]}>
-            <HomeUser />
-          </ProtectedRoute>
-        }
-      /> */}
+      <Route path="/login" element={<Login />} />
       <Route
-        exact
         path="/bikes/:id"
         element={
-          <ProtectedRoute
-            roles={["user", "admin"]}
-            roleHandler={(val) => setRole(val)}
-          >
-            <UserLayout>
-              <Process />
-            </UserLayout>
+          <ProtectedRoute>
+            <ValidateUser>
+              <UserLayout>
+                <Process />
+              </UserLayout>
+            </ValidateUser>
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <div className=" font-bold h-screen flex flex-col items-center justify-center">
+            <div className="text-7xl ">404</div>
+            <div className="">Page Not Found</div>
+            <button
+              className="mt-2 p-1 px-2 border-2 border-blue-600 text-blue-600 rounded-md"
+              onClick={() => navigate("/")}
+            >
+              Home
+            </button>
+          </div>
         }
       />
     </Routes>
   );
 };
 
-export default Router;
+export default AppRouter;
