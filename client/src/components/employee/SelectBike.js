@@ -1,17 +1,35 @@
-import React from "react";
-import { Bikes } from "../../data/Bikes";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SelectBike = () => {
+  const [bikes, setBikes] = useState(null);
+  console.log("bikes: ", bikes);
   const navigate = useNavigate();
   const clickHandler = (bike) => {
     navigate(`bikes/${bike.id}`);
   };
+  const fetchBikesData = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/api/v1/bikes`;
+    try {
+      const response = await axios.get(url, { withCredentials: true });
+      console.log("response: ", response);
+      if (response) {
+        setBikes(response.data.bikes);
+      }
+    } catch (error) {
+      console.error("Fetch data failed", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBikesData();
+  }, []);
   return (
     <div className="relative p-10">
       <div className="bikes grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 hover:scale-1.2 gap-5">
-        {Bikes.length &&
-          Bikes.map((bike, index) => (
+        {bikes &&
+          bikes.map((bike, index) => (
             <div
               className="p-5 bike shadow-xl "
               onClick={() => clickHandler(bike)}

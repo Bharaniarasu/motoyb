@@ -1,4 +1,10 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  redirect,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import Login from "../components/Login";
 import ProtectedRoute, {
@@ -11,6 +17,7 @@ import HomeUser from "../components/employee/Home";
 import Process from "../components/employee/Process";
 import UserLayout from "../layout/UserLayout";
 import { useUser } from "../services/UserContext";
+import Loader from "../components/Loader";
 
 const HomeComponent = () => {
   const { userData, loading } = useUser();
@@ -28,6 +35,11 @@ const HomeComponent = () => {
 
 const AppRouter = () => {
   const navigate = useNavigate();
+  const { userData, loading } = useUser();
+
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <Routes>
       <Route

@@ -4,6 +4,8 @@ const {
   initiateAssemble,
   scheduleUpdate,
   validatePending,
+  getBikes,
+  getBikesPerId,
 } = require("../controllers/bikeController");
 const {
   isAuthenticatedUser,
@@ -12,10 +14,19 @@ const {
 
 const router = express.Router();
 
-router.route("/register").post(registerBikes);
+router
+  .route("/register")
+  .post(isAuthenticatedUser, autheriseUserRole("user"), registerBikes);
+router.route("/").get(isAuthenticatedUser, autheriseUserRole("user"), getBikes);
+router
+  .route("/:id")
+  .get(isAuthenticatedUser, autheriseUserRole("user"), getBikesPerId);
+
 router
   .route("/status/update")
   .post(isAuthenticatedUser, autheriseUserRole("user"), initiateAssemble);
-router.route("/status/validate").get(isAuthenticatedUser, validatePending);
+router
+  .route("/status/validate")
+  .get(isAuthenticatedUser, autheriseUserRole("user"), validatePending);
 
 module.exports = router;

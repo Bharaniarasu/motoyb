@@ -1,4 +1,5 @@
 const catchAsyncError = require("../middlewares/catchAsyncError");
+const ErrorHandler = require("../middlewares/errorHandler");
 const BikeAssemble = require("../models/assembleModel");
 const BikeModel = require("../models/bikeModel");
 const {
@@ -13,6 +14,24 @@ exports.registerBikes = catchAsyncError(async (req, res, next) => {
   if (response) {
     res.status(201).json({ success: true, message: "Bike added", response });
   }
+});
+exports.getBikes = catchAsyncError(async (req, res, next) => {
+  const bikes = await BikeModel.find();
+
+  if (!bikes) {
+    return next(new ErrorHandler("No records found", 400));
+  }
+  res
+    .status(201)
+    .json({ success: true, message: "Bike record fetched", bikes });
+});
+
+exports.getBikesPerId = catchAsyncError(async (req, res, next) => {
+  const bike = await BikeModel.find({ id: +req.params.id });
+  if (!bike) {
+    return next(new ErrorHandler("No records found", 400));
+  }
+  res.status(201).json({ success: true, message: "Bike record fetched", bike });
 });
 
 exports.initiateAssemble = catchAsyncError(async (req, res, next) => {

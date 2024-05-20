@@ -24,7 +24,7 @@ const Login = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        if (response.data.user.role == "admin") {
+        if (response.data.user.role === "admin") {
           navigate("/dashboard");
         } else {
           navigate("/");

@@ -5,11 +5,16 @@ const {
   logoutUser,
   getUserProfile,
 } = require("../controllers/authController");
-const { isAuthenticatedUser } = require("../middlewares/authenticate");
+const {
+  isAuthenticatedUser,
+  autheriseUserRole,
+} = require("../middlewares/authenticate");
 const router = express.Router();
 
 router.route("/login").post(login);
-router.route("/register").post(createUser);
+router
+  .route("/register")
+  .post(isAuthenticatedUser, autheriseUserRole("admin"), createUser);
 router.route("/logout").get(isAuthenticatedUser, logoutUser);
 router.route("/").get(isAuthenticatedUser, getUserProfile);
 

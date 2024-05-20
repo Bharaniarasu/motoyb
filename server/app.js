@@ -14,7 +14,7 @@ const errorMiddleware = require("./middlewares/error");
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(cookieparser());
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/v1/user", authRoute);
 app.use("/api/v1/bikes", bikeRoute);
 app.use("/api/v1/admin", adminRoute);
