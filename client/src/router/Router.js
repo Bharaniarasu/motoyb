@@ -1,29 +1,19 @@
-import {
-  Routes,
-  Route,
-  useNavigate,
-  useLocation,
-  redirect,
-} from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Login from "../components/Login";
-import ProtectedRoute, {
-  ValidateAdmin,
-  ValidateUser,
-  fetchUserData,
-} from "./ProtectedRouter";
+import ProtectedRoute, { ValidateAdmin, ValidateUser } from "./ProtectedRouter";
 import HomeAdmin from "../components/admin/Home";
 import HomeUser from "../components/employee/Home";
 import Process from "../components/employee/Process";
 import UserLayout from "../layout/UserLayout";
-import { useUser } from "../services/UserContext";
 import Loader from "../components/Loader";
+import { useSelector } from "react-redux";
 
 const HomeComponent = () => {
-  const { userData, loading } = useUser();
-
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.AuthState
+  );
   //Need to check role
-  switch (userData.role) {
+  switch (user.role) {
     case "admin":
       return <HomeAdmin />;
     case "user":
@@ -34,8 +24,10 @@ const HomeComponent = () => {
 };
 
 const AppRouter = () => {
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.AuthState
+  );
   const navigate = useNavigate();
-  const { userData, loading } = useUser();
 
   if (loading) {
     return <Loader />;
@@ -55,7 +47,7 @@ const AppRouter = () => {
         element={
           <ProtectedRoute>
             <ValidateAdmin>
-              <HomeAdmin />
+              <HomeComponent />
             </ValidateAdmin>
           </ProtectedRoute>
         }

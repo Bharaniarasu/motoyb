@@ -1,16 +1,18 @@
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
-import { useUser } from "../services/UserContext";
+import { useSelector } from "react-redux";
 
 export const ValidateAdmin = ({ children }) => {
-  const { userData, loading } = useUser();
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.AuthState
+  );
   const navigate = useNavigate();
 
   if (loading) {
     return <Loader />;
   }
 
-  return userData.role === "admin" ? (
+  return user.role === "admin" ? (
     children
   ) : (
     <div className="flex flex-col justify-center items-center h-screen">
@@ -27,14 +29,16 @@ export const ValidateAdmin = ({ children }) => {
 };
 
 export const ValidateUser = ({ children }) => {
-  const { userData, loading } = useUser();
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.AuthState
+  );
   const navigate = useNavigate();
 
   if (loading) {
     return <Loader />;
   }
 
-  return userData.role === "user" ? (
+  return user.role === "user" ? (
     children
   ) : (
     <div className="flex flex-col justify-center items-center h-screen ">
@@ -49,13 +53,15 @@ export const ValidateUser = ({ children }) => {
   );
 };
 const ProtectedRoute = ({ children }) => {
-  const { userData, loading } = useUser();
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.AuthState
+  );
 
   if (loading) {
     return <Loader />;
   }
 
-  return userData ? children : <Navigate to="/login" replace />;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;

@@ -3,6 +3,30 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import CustomModal from "../../layout/CustomModal";
 
+function timeStringToMilliseconds(timeString) {
+  // Regular expression to match hours, minutes, and seconds
+  const regex =
+    /(\d+)\s*hour[s]?\s*(\d+)\s*min[s]?|(\d+)\s*min[s]?|(\d+)\s*sec[s]?/g;
+  let totalMilliseconds = 0;
+  let match;
+
+  while ((match = regex.exec(timeString)) !== null) {
+    if (match[1] && match[2]) {
+      // If both hours and minutes are present
+      totalMilliseconds += parseInt(match[1]) * 3600000; // Convert hours to milliseconds
+      totalMilliseconds += parseInt(match[2]) * 60000; // Convert minutes to milliseconds
+    } else if (match[3]) {
+      // If only minutes are present
+      totalMilliseconds += parseInt(match[3]) * 60000; // Convert minutes to milliseconds
+    } else if (match[4]) {
+      // If only seconds are present
+      totalMilliseconds += parseInt(match[4]) * 1000; // Convert seconds to milliseconds
+    }
+  }
+
+  return totalMilliseconds;
+}
+
 const Process = () => {
   const [showModal, setShowModal] = useState(false);
   const { id } = useParams();
@@ -29,6 +53,7 @@ const Process = () => {
   };
 
   const validateStatus = async () => {
+    console.log("VAlidation Called");
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/api/v1/bikes/status/validate`,
@@ -59,6 +84,9 @@ const Process = () => {
   useEffect(() => {
     fetchbike();
     validateStatus();
+    // const interval = setInterval(validateStatus, 3000);
+
+    // return () => clearInterval(interval);
   }, []);
   return (
     <>

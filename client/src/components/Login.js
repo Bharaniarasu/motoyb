@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Login_image from "../assets/images/Login_icon.png";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../store/actions/UserActions";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [snackbar, setSnackbar] = useState({ message: "", type: "" });
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.AuthState
+  );
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const showSnackbar = (message, type) => {
     setSnackbar({ message, type });
     setTimeout(() => setSnackbar({ message: "", type: "" }), 5000);
@@ -17,34 +22,15 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/api/v1/user/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        if (response.data.user.role === "admin") {
-          navigate("/dashboard");
-        } else {
-          navigate("/");
-        }
-        showSnackbar(response.data.message, "success");
-      }
-    } catch (error) {
-      if (error.response) {
-        console.error("Login failed:", error.response.data);
-        showSnackbar(
-          error.response.data.message || "An error occurred",
-          "error"
-        );
-      } else {
-        console.error("Login failed:", error.message);
-        showSnackbar(error.message, "error");
-      }
-    }
+    dispatch(login(email, password));
+    setEmail("");
+    setPassword("");
   };
-
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };

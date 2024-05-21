@@ -1,12 +1,16 @@
-import { BrowserRouter, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Router from "./router/Router";
-import { useUser } from "./services/UserContext";
-import Loader from "./components/Loader";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { loadUser } from "./store/actions/UserActions";
 
 const App = () => {
-  const { userData, loading } = useUser();
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(loadUser);
+  }, [dispatch]);
   return (
     <BrowserRouter>
       <ToastContainer theme="dark" position="top-right" />

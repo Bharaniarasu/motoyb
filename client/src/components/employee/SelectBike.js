@@ -4,7 +4,6 @@ import axios from "axios";
 
 const SelectBike = () => {
   const [bikes, setBikes] = useState(null);
-  console.log("bikes: ", bikes);
   const navigate = useNavigate();
   const clickHandler = (bike) => {
     navigate(`bikes/${bike.id}`);
@@ -13,7 +12,6 @@ const SelectBike = () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/api/v1/bikes`;
     try {
       const response = await axios.get(url, { withCredentials: true });
-      console.log("response: ", response);
       if (response) {
         setBikes(response.data.bikes);
       }

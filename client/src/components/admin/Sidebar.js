@@ -9,21 +9,15 @@ import { GoOrganization } from "react-icons/go";
 import { TbReportAnalytics } from "react-icons/tb";
 import { BsTools } from "react-icons/bs";
 import { IoMdLogOut } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { logout } from "../../store/actions/UserActions";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-
+  const dispatch = useDispatch();
   const handleLogout = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/api/v1/user/logout`,
-        { withCredentials: true }
-      );
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    dispatch(logout);
   };
   return (
     <div className="">

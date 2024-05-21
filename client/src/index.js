@@ -5,13 +5,15 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "react-toastify/dist/ReactToastify.css";
 import { UserProvider } from "./services/UserContext";
+import { Provider } from "react-redux";
+import Store from "./store/Store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <UserProvider>
+    <Provider store={Store}>
       <App />
-    </UserProvider>
+    </Provider>
   </React.StrictMode>
 );
 
